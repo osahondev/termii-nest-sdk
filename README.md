@@ -1,73 +1,134 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# NestJS SDK Documentation
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Introduction
+The **termii-nest-sdk** is a NestJS-based software development kit (SDK) created to enable the seamless integration of Termii based APIs in NestJS based project.
 
 ## Installation
+To install the SDK, run the following command:
 
 ```bash
-$ npm install
+npm install termii-nest-sdk
 ```
 
-## Running the app
+or with Yarn:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+yarn add termii-nest-sdk
 ```
 
-## Test
+## Configuration
+To configure the SDK, import the module into your `AppModule` and provide necessary options.
+
+### Example Configuration
+
+```typescript
+import { Module } from '@nestjs/common';
+import { TermiiSDKModule } from 'termii-nest-sdk';
+
+@Module({
+  imports: [
+    TermiiSDKModule.register({
+      apiKey: process.env.API_KEY, // (this is the assumption that the environment variable is named API_KEY in your application)
+      baseUrl: 'https://v3.api.termii.com',
+      isGlobal: true // this is an optional flag/param. It's false by default. If false, it means you need to import it into every module that needs it
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+### Environment Variables
+Ensure you set up the necessary environment variables:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+API_KEY=[your_api_key]
+BASE_URL=https://v3.api.termii.com
 ```
 
-## Support
+## Authentication
+Some API requests may require authentication. termii-nest-sdk handles authentication using an API key that's why when registering the sdk, we ask for the API key.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-## Stay in touch
+## Usage
+Once configured, the SDK can be used in any service or controller.
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Importing and Using the SDK Service
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { AbstractMessagingService } from 'termii-nest-sdk';
+
+@Injectable()
+export class NotificationService {
+  constructor(private readonly messagingService: AbstractMessagingService) {}
+  async sendSMSMessage() {
+    const samplePayload = {
+       to: '[recipient]', // recipient phone number (can be in normal format or international format)
+      from: '[sender_id]', // approved sender id
+      sms: 'Hi there, testing Termii',
+      type: '[message_type]', // plain
+      channel: '[channel_type]', // can be dnd, whatsapp or generic
+    }
+    
+    return this.messagingService.sendSingleMessage(samplePayload);
+  }
+}
+```
+
+## API Methods
+
+### `sendSingleMessage(payload: TmSingleMessageRequestPayload)`
+**Description:** Sends messgae to a single recipient or phone number.
+
+**Example Usage:**
+
+```typescript
+const response = await sdkService.fetchData();
+console.log(response);
+```
+
+### `sendData(payload: any)`
+**Description:** Sends data to the API.
+
+**Example Usage:**
+
+```typescript
+const payload = { key: 'value' };
+const response = await sdkService.sendData(payload);
+console.log(response);
+```
+
+## Error Handling
+All SDK methods return structured responses, but errors can be caught using a `try-catch` block.
+
+## Best Practices
+- Always handle API errors in your application gracefully.
+- Use environment variables for sensitive credentials.
+- Enable logging for debugging purposes.
+
+## Logging & Debugging
+Enable verbose logging by setting an environment variable:
+
+```bash
+DEBUG=sdk:* npm start
+```
 
 ## License
+This SDK is licensed under the **MIT License**. See `LICENSE` for details.
 
-Nest is [MIT licensed](LICENSE).
+## Contributing
+We welcome contributions! Please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch for your feature.
+3. Commit and push your changes.
+4. Open a pull request.
+
+## Support
+For issues or questions, please open an issue on [GitHub Repo URL] (https://github.com/osahondev/termii-nest-sdk.git) or contact [Support Email] (osahondevengine@gmail.com).
+
+
+## Authors
+
+- [Michael Osahon](https://github.com/osahondev)
+

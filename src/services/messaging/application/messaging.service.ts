@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { AbstractMessagingService } from './core/messaging.abstract.service';
-import { IntegrationService } from 'src/services/integration/integration.service';
 import { TmSingleMessageRequestPayload } from './payload';
 import { handleHttpResponse } from 'src/helpers';
 import { firstValueFrom } from 'rxjs';
 import { TmSingleMessageResponse } from './response';
+import { IntegrationService } from 'src/services/integration';
+import { AbstractMessagingService } from './core';
 
 @Injectable()
 export class MessagingService implements AbstractMessagingService {

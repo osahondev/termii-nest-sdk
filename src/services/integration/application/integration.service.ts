@@ -21,7 +21,6 @@ export class IntegrationService extends HttpService {
       },
     };
     this.axiosRef.defaults.baseURL = termiiBaseUrl;
-    // this.axiosRef.defaults.timeout = 3000;
     this.apiKey = termiiApiKey;
   }
   public override get<T>(url: string): Observable<AxiosResponse<T>> {
