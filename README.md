@@ -1,4 +1,4 @@
-# NestJS SDK Documentation
+# Termii SDK Documentation
 
 ## Introduction
 The **termii-nest-sdk** is a NestJS-based software development kit (SDK) created to enable the seamless integration of Termii based APIs in NestJS based project.
