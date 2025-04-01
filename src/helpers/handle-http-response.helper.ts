@@ -44,7 +44,10 @@ export const handleHttpResponse = <
             return throwError(() => new NotFoundException(errorMessage));
           default:
             return throwError(
-              () => new InternalServerErrorException(errorMessage),
+              () =>
+                new InternalServerErrorException(
+                  `Server Error: an exception occurred on Termii's end. `,
+                ),
             );
         }
       }),

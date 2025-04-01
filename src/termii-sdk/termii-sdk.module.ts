@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
-import { MessagingService } from 'src/services/messaging/application/messaging.service';
 import { ConfigurableModuleClass } from './termii-sdk-definition';
-import { IntegrationService } from 'src/services/integration/application/integration.service';
-import { AbstractMessagingService } from 'src/services/messaging/application/core';
-import { AbstractSenderIDService } from 'src/services/sender';
-import { SenderIDService } from 'src/services/sender/application/sender-id.service';
+import {
+  AbstractMessagingService,
+  MessagingService,
+} from 'src/services/messaging';
+import { AbstractSenderIDService, SenderIDService } from 'src/services/sender';
+import { IntegrationService } from 'src/services/integration';
+import { AbstractNumberService, NumberService } from 'src/services/number';
+import { AbstractTokenService, TokenService } from 'src/services/token';
 
 @Module({
   providers: [
@@ -17,6 +20,14 @@ import { SenderIDService } from 'src/services/sender/application/sender-id.servi
       provide: AbstractSenderIDService,
       useClass: SenderIDService,
     },
+    {
+      provide: AbstractNumberService,
+      useClass: NumberService,
+    },
+    {
+      provide: AbstractTokenService,
+      useClass: TokenService,
+    },
   ],
   exports: [
     {
@@ -26,6 +37,14 @@ import { SenderIDService } from 'src/services/sender/application/sender-id.servi
     {
       provide: AbstractSenderIDService,
       useClass: SenderIDService,
+    },
+    {
+      provide: AbstractNumberService,
+      useClass: NumberService,
+    },
+    {
+      provide: AbstractTokenService,
+      useClass: TokenService,
     },
     IntegrationService,
   ],
