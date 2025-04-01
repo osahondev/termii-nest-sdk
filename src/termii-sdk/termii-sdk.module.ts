@@ -3,6 +3,8 @@ import { MessagingService } from 'src/services/messaging/application/messaging.s
 import { ConfigurableModuleClass } from './termii-sdk-definition';
 import { IntegrationService } from 'src/services/integration/application/integration.service';
 import { AbstractMessagingService } from 'src/services/messaging/application/core';
+import { AbstractSenderIDService } from 'src/services/sender';
+import { SenderIDService } from 'src/services/sender/application/sender-id.service';
 
 @Module({
   providers: [
@@ -11,11 +13,19 @@ import { AbstractMessagingService } from 'src/services/messaging/application/cor
       provide: AbstractMessagingService,
       useClass: MessagingService,
     },
+    {
+      provide: AbstractSenderIDService,
+      useClass: SenderIDService,
+    },
   ],
   exports: [
     {
       provide: AbstractMessagingService,
       useClass: MessagingService,
+    },
+    {
+      provide: AbstractSenderIDService,
+      useClass: SenderIDService,
     },
     IntegrationService,
   ],

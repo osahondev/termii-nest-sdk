@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { TmSingleMessageRequestPayload } from './payload';
-import { handleHttpResponse } from 'src/helpers';
+import {
+  TmBulkMessageRequestPayload,
+  TmSingleMessageRequestPayload,
+} from './payload';
+import { handleHttpResponse, reprocessPhoneNumber } from 'src/helpers';
 import { firstValueFrom } from 'rxjs';
-import { TmSingleMessageResponse } from './response';
+import { TmBulkMessageResponse, TmSingleMessageResponse } from './response';
 import { IntegrationService } from 'src/services/integration';
 import { AbstractMessagingService } from './core';
 
@@ -12,12 +15,35 @@ export class MessagingService implements AbstractMessagingService {
   public sendSingleMessage = async (
     payload: TmSingleMessageRequestPayload,
   ): Promise<TmSingleMessageResponse> => {
+    const { to } = payload;
+    const reprocessedPayload = {
+      ...payload,
+      to: reprocessPhoneNumber(to),
+    };
     return await firstValueFrom(
       this.integrationService
         .post<
           TmSingleMessageResponse,
           TmSingleMessageRequestPayload
-        >('/api/sms/send', payload)
+        >('/api/sms/send', reprocessedPayload)
+        .pipe(handleHttpResponse()),
+    );
+  };
+
+  public sendBulkMessage = async (
+    payload: TmBulkMessageRequestPayload,
+  ): Promise<TmBulkMessageResponse> => {
+    const { to } = payload;
+    const reprocessedPayload: TmBulkMessageRequestPayload = {
+      ...payload,
+      to: to.map((phone) => reprocessPhoneNumber(phone)),
+    };
+    return await firstValueFrom(
+      this.integrationService
+        .post<
+          TmBulkMessageResponse,
+          TmBulkMessageRequestPayload
+        >('/api/sms/send/bulk', reprocessedPayload)
         .pipe(handleHttpResponse()),
     );
   };

@@ -16,15 +16,14 @@ export class IntegrationService extends HttpService {
     const { termiiApiKey, termiiBaseUrl } = options;
     this.axiosRequestConfig = {
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${options.termiiApiKey}`,
+        'Content-Type': ['application/json', 'application/json'],
       },
     };
     this.axiosRef.defaults.baseURL = termiiBaseUrl;
     this.apiKey = termiiApiKey;
   }
   public override get<T>(url: string): Observable<AxiosResponse<T>> {
-    return super.get(url);
+    return super.get<T>(`${url}?api_key=${this.apiKey}`);
   }
   public override post<T, K>(
     url: string,
