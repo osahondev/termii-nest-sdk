@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { TmSendTokenPayload } from './payload';
 import { handleHttpResponse } from 'src/helpers';
 import { firstValueFrom } from 'rxjs';

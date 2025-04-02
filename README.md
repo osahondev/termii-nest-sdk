@@ -1,7 +1,7 @@
-# Termii SDK Documentation
+# Termii NestJS SDK Documentation
 
 ## Introduction
-The **termii-nest-sdk** is a NestJS-based software development kit (SDK) created to enable the seamless integration of Termii based APIs in NestJS based project.
+The **termii-nest-sdk** is a NestJS-based software development kit (SDK) designed to simplify the integration of Termii APIs into NestJS projects. It provides a structured and efficient way to interact with Termii's messaging and authentication services.
 
 ## Installation
 To install the SDK, run the following command:
@@ -17,7 +17,7 @@ yarn add termii-nest-sdk
 ```
 
 ## Configuration
-To configure the SDK, import the module into your `AppModule` and provide necessary options.
+To set up the SDK, import the module into your `AppModule` and pass the required configuration options.
 
 ### Example Configuration
 
@@ -28,9 +28,9 @@ import { TermiiSDKModule } from 'termii-nest-sdk';
 @Module({
   imports: [
     TermiiSDKModule.register({
-      apiKey: process.env.API_KEY, // (this is the assumption that the environment variable is named API_KEY in your application)
+      apiKey: process.env.API_KEY, // Ensure API_KEY is set in your environment variables
       baseUrl: 'https://v3.api.termii.com',
-      isGlobal: true // this is an optional flag/param. It's false by default. If false, it means you need to import it into every module that needs it
+      isGlobal: true // Optional flag (default: false). If false, you must import it into each module that needs it.
     }),
   ],
 })
@@ -38,7 +38,7 @@ export class AppModule {}
 ```
 
 ### Environment Variables
-Ensure you set up the necessary environment variables:
+Ensure the following environment variables are set:
 
 ```bash
 API_KEY=[your_api_key]
@@ -46,13 +46,12 @@ BASE_URL=https://v3.api.termii.com
 ```
 
 ## Authentication
-Some API requests may require authentication. termii-nest-sdk handles authentication using an API key that's why when registering the sdk, we ask for the API key.
-
+Some Termii API requests require authentication. The SDK manages authentication using an API key, which must be provided during module registration.
 
 ## Usage
-Once configured, the SDK can be used in any service or controller.
+Once configured, the SDK can be utilized in any service or controller.
 
-### Importing and Using the SDK Service
+### Example: Sending an SMS Message
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -61,63 +60,81 @@ import { AbstractMessagingService } from 'termii-nest-sdk';
 @Injectable()
 export class NotificationService {
   constructor(private readonly messagingService: AbstractMessagingService) {}
+  
   async sendSMSMessage() {
     const samplePayload = {
-       to: '[recipient]', // recipient phone number (can be in normal format or international format)
-      from: '[sender_id]', // approved sender id
+      to: '[recipient]', // Recipient's phone number
+      from: '[sender_id]', // Approved sender ID
       sms: 'Hi there, testing Termii',
-      type: '[message_type]', // plain
-      channel: '[channel_type]', // can be dnd, whatsapp or generic
-    }
+      type: '[message_type]', // Message type (e.g., plain)
+      channel: '[channel_type]', // Channel type (e.g., dnd, whatsapp, generic)
+    };
     
     return this.messagingService.sendSingleMessage(samplePayload);
   }
 }
 ```
 
+## Available APIs in the SDK
+
+### `AbstractMessagingService`
+Handles sending text messages across different messaging channels.
+
+### `AbstractNumberService`
+Manages sending messages using Termii's auto-generated messaging numbers.
+
+### `AbstractSenderIDService`
+Retrieves registered business statuses and requests sender ID registration.
+
+### `AbstractTokenService`
+Facilitates OTP (One-Time Password) sending and verification.
+
 ## API Methods
 
-### `sendSingleMessage(payload: TmSingleMessageRequestPayload)`
-**Description:** Sends messgae to a single recipient or phone number.
+### Messaging Services
+- **`sendSingleMessage(payload: TmSingleMessageRequestPayload)`**: Sends a message to a single recipient.
+- **`sendBulkMessage(payload: TmBulkMessageRequestPayload)`**: Sends messages to multiple recipients.
 
-**Example Usage:**
+### Number Services
+- **`sendMessage(payload: TmNumberPayload)`**: Sends messages using Termii's generated numbers.
 
-```typescript
-const response = await sdkService.fetchData();
-console.log(response);
-```
+### Sender ID Services
+- **`fetchSenderId()`**: Retrieves details of registered sender IDs.
+- **`requestSenderId(payload: TmRequestSenderIDPayload)`**: Requests a sender ID.
 
-### `sendData(payload: any)`
-**Description:** Sends data to the API.
-
-**Example Usage:**
-
-```typescript
-const payload = { key: 'value' };
-const response = await sdkService.sendData(payload);
-console.log(response);
-```
+### Token Services
+- **`sendToken(payload: TmSendTokenPayload)`**: Sends OTPs across multiple channels.
+- **`verifyToken(payload: TmVerifyTokenPayload)`**: Verifies sent tokens.
 
 ## Error Handling
-All SDK methods return structured responses, but errors can be caught using a `try-catch` block.
+All SDK methods return structured responses. Errors can be managed using `try-catch` blocks.
+
+```typescript
+try {
+  const response = await messagingService.sendSingleMessage(payload);
+  console.log(response);
+} catch (error) {
+  console.error('Error:', error.message);
+}
+```
 
 ## Best Practices
-- Always handle API errors in your application gracefully.
-- Use environment variables for sensitive credentials.
-- Enable logging for debugging purposes.
+- Always handle API errors gracefully.
+- Use environment variables to manage sensitive credentials securely.
+- Enable logging for better debugging.
 
 ## Logging & Debugging
-Enable verbose logging by setting an environment variable:
+Enable verbose logging by setting the following environment variable:
 
 ```bash
 DEBUG=sdk:* npm start
 ```
 
 ## License
-This SDK is licensed under the **MIT License**. See `LICENSE` for details.
+This SDK is licensed under the **MIT License**. See the `LICENSE` file for details.
 
 ## Contributing
-We welcome contributions! Please follow these steps:
+We welcome contributions! Follow these steps to contribute:
 
 1. Fork the repository.
 2. Create a new branch for your feature.
@@ -125,10 +142,9 @@ We welcome contributions! Please follow these steps:
 4. Open a pull request.
 
 ## Support
-For issues or questions, please open an issue on [GitHub Repo URL] (https://github.com/osahondev/termii-nest-sdk.git) or contact [Support Email] (osahondevengine@gmail.com).
-
+For issues or questions, please open an issue on the [GitHub repository](https://github.com/osahondev/termii-nest-sdk.git) or contact via email: [osahondevengine@gmail.com](mailto:osahondevengine@gmail.com).
 
 ## Authors
 
-- [Michael Osahon](https://github.com/osahondev)
+- **Michael Osahon** - [GitHub](https://github.com/osahondev)
 
