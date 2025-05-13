@@ -1,6 +1,6 @@
 {
   "name": "termii-nest-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An SDK that enables NestJS developers to integrate Termii's messaging features seamlessly without directly interacting with the API.",
   "author": "Michael Osahon (@osahondev)",
   "private": false,
